@@ -132,19 +132,19 @@ metadata:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: sgs-runc-wrapper-installer
+  name: sgs-runtime-wrapper-installer
   namespace: bacchus-sgs
   labels:
-    app.kubernetes.io/name: sgs-runc-wrapper
+    app.kubernetes.io/name: sgs-runtime-wrapper
     app.kubernetes.io/component: runtime-installer
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: sgs-runc-wrapper
+      app.kubernetes.io/name: sgs-runtime-wrapper
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: sgs-runc-wrapper
+        app.kubernetes.io/name: sgs-runtime-wrapper
     spec:
       nodeSelector:
         kubernetes.io/os: linux
@@ -162,11 +162,12 @@ spec:
             - -c
             - |
               set -e
-              echo "Installing sgs-runc-wrapper..."
-              cp /usr/local/bin/sgs-runc-wrapper /host/usr/local/bin/sgs-runc-wrapper
-              chmod +x /host/usr/local/bin/sgs-runc-wrapper
+              echo "Installing sgs-runtime-wrapper..."
+              find /nix/store -name sgs-runtime-wrapper -executable -type f \
+                -exec cp {} /host/usr/local/bin/sgs-runtime-wrapper \;
+              chmod +x /host/usr/local/bin/sgs-runtime-wrapper
               echo "Installation complete. Verifying..."
-              ls -l /host/usr/local/bin/sgs-runc-wrapper
+              ls -l /host/usr/local/bin/sgs-runtime-wrapper
           volumeMounts:
             - name: host-bin
               mountPath: /host/usr/local/bin
